@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Test Game Vineet</title>
+<title>Happy Birthday Vineet bhai 💪🏻</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -22,19 +22,59 @@ body{
   transform:translateX(-50%);
   z-index:5;font-size:18px;
 }
+/* END SCREEN */
+#endScreen{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:0 20px;z-index:10;text-align:center;
+}
+#endScreen h1{font-size:24px;margin-bottom:8px}
+#endScreen p{font-size:18px;margin:4px 0}
+#endScreen img{
+  max-width:70vw;
+  border-radius:20px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.7);
+  margin:10px 0;
+}
+#endScreen button{
+  margin-top:12px;
+  padding:12px 22px;
+  font-size:18px;
+  border:none;border-radius:18px;
+  background:#ffba08;color:#000;
+  font-weight:bold;
+}
 </style>
 </head>
 <body>
 
 <div id="msg">Tap anywhere to start / jump</div>
 <canvas id="gameCanvas"></canvas>
+
+<!-- END PAGE -->
+<div id="endScreen">
+  <h1>🏆 Happy Birthday Vineet bhai 💪🏻 🏆</h1>
+  <img src="Veere.jpeg" alt="Vineet">
+  <p>Bhaichara bana rahega hamesha ❤️</p>
+  <p>Janamdin ki hardik shubhkamnayen! 🎉</p>
+  <button onclick="location.reload()">Ek Aur Ride!</button>
+</div>
+
 <audio id="bgMusic" loop></audio>
+<audio id="endMusic"></audio>
 
 <script>
 const canvas=document.getElementById("gameCanvas");
 const ctx=canvas.getContext("2d");
 const msg=document.getElementById("msg");
 const bgMusic=document.getElementById("bgMusic");
+const endMusic=document.getElementById("endMusic");
+const endScreen=document.getElementById("endScreen");
+
+bgMusic.volume=1.0;
+endMusic.volume=1.0;
 
 function resize(){
   canvas.width=window.innerWidth;
@@ -51,9 +91,10 @@ let vy=0;
 const gravity=0.7;
 const jump=-15;
 const bikes=[];
+const NAME="Vineet";
 
 function resetPlayer(){
-  playerX=canvas.width/4;          // left side center
+  playerX=canvas.width/4;
   playerY=canvas.height/2;
   vy=0;
 }
@@ -63,7 +104,8 @@ function startGame(){
   running=true;
   score=0;
   msg.textContent="Score: 0 (tap to jump)";
-  bgMusic.src="BG.mp3";
+  bgMusic.src="BG.mp3";        // background song
+  bgMusic.currentTime=0;
   bgMusic.play().catch(()=>{});
   gameLoop();
 }
@@ -116,16 +158,33 @@ function update(){
   }
 
   spawnBike();
+
+  // score 20 pe end
+  if(score>=20){
+    endGame();
+  }
 }
 
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  // player bike (yellow box)
+  // heading
+  ctx.fillStyle="#fff";
+  ctx.font="bold 22px Arial";
+  ctx.textAlign="center";
+  ctx.fillText("Happy Birthday "+NAME+" bhai 💪🏻",canvas.width/2,40);
+
+  // player bike
   ctx.fillStyle="#ffd23f";
   ctx.fillRect(playerX,playerY,playerW,playerH);
+  ctx.fillStyle="#d00000";
+  ctx.font="bold 18px Arial";
+  ctx.fillText("RE",playerX+playerW/2,playerY+22);
+  ctx.fillStyle="#fff";
+  ctx.font="bold 16px Arial";
+  ctx.fillText("650",playerX+playerW/2,playerY+40);
 
-  // bikes (grey circles)
+  // bikes
   ctx.fillStyle="#c0c0c0";
   bikes.forEach(b=>{
     ctx.beginPath();
@@ -139,6 +198,16 @@ function gameLoop(){
   update();
   draw();
   requestAnimationFrame(gameLoop);
+}
+
+function endGame(){
+  if(!running) return;
+  running=false;
+  bgMusic.pause();
+  endMusic.src="END.mp3";   // ending song
+  endMusic.currentTime=0;
+  endMusic.play().catch(()=>{});
+  endScreen.style.display="flex";
 }
 </script>
 </body>
